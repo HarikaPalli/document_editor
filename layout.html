@@ -1,0 +1,48 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}My App{% endblock %}</title>
+
+  <!-- Required CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendors/css/vendor.bundle.base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/vertical-layout-light/style.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}"/>
+
+
+<style>
+  .main-panel{
+    width: 100%;
+  }
+  .content-wrapper{
+    padding: 0 1.12px 1.812px 10px;
+    margin-top: 0px;
+  }
+</style>
+
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <div class="container-scroller">
+    {% include 'partials/_navbar.html' %}
+    <!-- {% include 'partials/_sidebar.html' %} -->
+
+    <div class="container-fluid page-body-wrapper">
+      <div class="main-panel">
+        <div class="content-wrapper">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- Required JS -->
+  <script src="{{ url_for('static', filename='vendors/js/vendor.bundle.base.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/template.js') }}"></script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

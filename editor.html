@@ -1,0 +1,333 @@
+{% extends "layout.html" %}
+
+{% block title %}Document Editor - Place Fields{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    
+        html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body > .editor-wrapper {
+    flex: 1;
+    overflow-y: auto;
+}
+footer {
+    padding: 10px;
+    background-color: #f1f1f1;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+}
+.main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        /* overflow: hidden; */
+    }
+
+
+    .editor-wrapper {
+        display: flex;
+        height: calc(100vh - 100px); /* Adjust based on your header height */
+        margin-top: 0px;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    #main-editor {
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 0;
+        margin-top: 0px;
+    }
+
+    .editor-header {
+        /* color:#007bff; */
+        margin-top: 0px;
+        margin-bottom: 1px;
+        margin-left: 0px;
+    }
+
+    .editor-content {
+        flex: 1;
+        overflow: hidden;
+        position: relative; /* Needed for absolute child positioning */
+    }
+
+    /* #editor, .cke_contents {
+        flex: 1;
+        height: 100% !important;
+    }
+
+    .editor-footer {
+        margin-top: 10px;
+    } */
+      /* CKEditor specific overrides */
+    #cke_editor {
+        height: 100% !important;
+    }
+    
+    .cke_contents {
+        height: 100% !important;
+        min-height: 100% !important;
+        flex: 1;
+    }
+    
+    .cke_wysiwyg_frame {
+        height: 100% !important;
+    }
+    
+    .cke_inner {
+        display: flex;
+        flex-direction: column;
+        height: 100% !important;
+    }
+    
+    .cke_contents {
+        flex: 1;
+    }
+
+    #right-panel {
+        width: 30%; /* Make it wider */
+        min-width: 320px;
+        max-width: 400px;
+        background: #f8f9fa;
+        border-left: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .panel-tabs {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .panel-tab {
+        flex: 1;
+        padding: 10px;
+        background: #e9ecef;
+        border-right: 1px solid #ccc;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .panel-tab.active {
+        background: white;
+        border-bottom: 2px solid #007bff;
+    }
+
+    .panel-content {
+        flex: 1;
+        display: none;
+        overflow-y: auto;
+    }
+
+    .panel-content.active {
+        display: block;
+    }
+
+    .field-item {
+        padding: 8px;
+        background: #e9ecef;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        cursor: grab;
+        border: 1px solid #ccc;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 6px;
+        margin-bottom: 10px;
+    }
+
+    .field-placeholder {
+        background-color: #e7f5ff;
+        border: 1px dashed #228be6;
+        padding: 2px 4px;
+        border-radius: 4px;
+        display: inline-block;
+        margin: 0 2px;
+        color: #228be6;
+        font-weight: bold;
+    }
+
+    .cke_top, .cke_bottom {
+        display: none !important;
+    }
+
+    /* .cke_contents {
+        padding: 0px !important;
+        background: white;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    } */
+     .abc{
+        
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+     }
+     #values-panel .form-group {
+    margin-bottom: 5px; /* Reduce from 10px or more */
+}
+
+#values-panel input[type="text"] {
+    margin-bottom: 4px; /* Optional: reduce space inside input block */
+    padding: 6px;        /* Keep input comfortable to use */
+}
+.placeholder-field {
+    font-weight: bold;
+}
+.fill-fields-btn{
+    background-color: #007bff;
+    color: white;
+}
+
+    
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="editor-wrapper">
+    <div id="main-editor" class="flex-grow-1">
+        <h2 class="editor-header">Place Fields in Document</h2>
+        <form class="abc" id="editor-form">
+            <div class="editor-content">
+                <textarea name="edited_content" id="editor">
+                    {{ content | safe }}
+                </textarea>
+            </div>
+            <div class="editor-footer">
+                <button type="button" id="fill-fields" class="btn fill-fields-btn">Fill Fields</button>
+                <button type="button" id="save-positions" class="btn btn-primary">Save Positions</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="right-panel">
+        <h5>Available Fields</h5>
+        <div id="field-list">
+            <div class="field-item" data-field="name">Name</div>
+            <div class="field-item" data-field="pan_no">PAN No</div>
+            <div class="field-item" data-field="aadhaar_no">Aadhaar No</div>
+            <div class="field-item" data-field="address1">Address1</div>
+            <div class="field-item" data-field="address2">Address2</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<script>
+    // Initialize CKEditor
+    let editor = CKEDITOR.replace('editor', {
+    allowedContent: true,
+    extraAllowedContent: '*[*]{*}(*)',  // Allow all elements, attributes, and styles
+    height: '100%',
+    fullPage: false,
+    enterMode: CKEDITOR.ENTER_BR,
+    autoParagraph: false,
+    basicEntities: false,
+    entities: false,
+    htmlEncodeOutput: false
+});
+
+    // Field insertion functionality
+    editor.on('instanceReady', function() {
+        $('.field-item').on('click', function() {
+            const fieldType = $(this).data('field');
+            const displayText = $(this).text();
+            const fieldId = 'field_' + Date.now();
+
+            const fieldHtml = `
+                
+                    <span class="field-placeholder"
+                        data-field="${fieldType}" 
+                        id="${fieldId}" 
+                        contenteditable="false">
+                        [${displayText}]
+                    </span>
+                &nbsp;
+            `;
+
+            editor.insertHtml(fieldHtml);
+        });
+    });
+
+// Save positions button
+$('#save-positions').click(function() {
+    const editorData = editor.getData();
+    const filename = '{{ filename }}';
+    
+    $.post('/save_draft', {
+        content: editorData,
+        filename: filename
+    }, function(response) {
+        if (response.status === 'success') {
+            alert('Field positions saved! You can now proceed to fill fields.');
+        } else {
+            alert('Error saving positions');
+        }
+    });
+});
+
+// Fill Fields button
+// Replace your fill-fields button handler with this:
+$('#fill-fields').click(function() {
+    // Get the complete HTML content
+    const editorData = editor.getData();
+    
+    // Create a temporary div to ensure proper HTML structure
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = editorData;
+    
+    $.ajax({
+        url: '/prepare_fill_fields',
+        type: 'POST',
+        data: {
+            content: tempDiv.innerHTML,  // Send the complete HTML
+            filename: '{{ filename }}'
+        },
+        success: function(response) {
+            if (response.status === 'success') {
+                window.location.href = response.redirect;
+            } else {
+                alert('Error: ' + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('Failed to prepare document: ' + error);
+        }
+    });
+});
+
+    // Editor resizing function
+    function resizeEditor() {
+        const contentContainer = document.querySelector('.editor-content');
+        const height = contentContainer.getBoundingClientRect().height;
+        if (editor) {
+            editor.resize('100%', height + 'px');
+        }
+    }
+    
+    window.addEventListener('load', resizeEditor);
+    window.addEventListener('resize', resizeEditor);
+    editor.on('instanceReady', resizeEditor);
+</script>
+{% endblock %}
